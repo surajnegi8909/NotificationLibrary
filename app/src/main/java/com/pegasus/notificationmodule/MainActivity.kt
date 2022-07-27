@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
 import com.pegasus.notificationlibrary.Notification
-import com.pegasus.notificationmodule.receiver.ActionReceiver
-import com.pegasus.notificationmodule.util.MyBroadcastListener
 
-class MainActivity : AppCompatActivity(), MyBroadcastListener {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -108,7 +106,7 @@ class MainActivity : AppCompatActivity(), MyBroadcastListener {
                 R.drawable.noti_icon,
                 "welcome to the world",
                 "1234",
-                2,
+                6,
                 ActionReceiver::class.java,
                 SecondActivity::class.java,
                 false,
@@ -118,23 +116,8 @@ class MainActivity : AppCompatActivity(), MyBroadcastListener {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        processInlineReply(intent)
-    }
-
-    private fun processInlineReply(intent: Intent?) {
-        val remoteInput: Bundle? = intent?.let { RemoteInput.getResultsFromIntent(it) }
-        if (remoteInput != null) {
-            val reply = remoteInput.getCharSequence(
-                "reply").toString()
-
-            System.err.println(">>>>>>>>>>> $reply")
-        }
-    }
-
-    override fun onBroadcastSuccess(message: String) {
-        Toast.makeText(this, "message is > $message", Toast.LENGTH_SHORT).show()
+    fun cancelNotification() {
+        Notification.dismissNotification(6)
     }
 
     class ActionReceiver : BroadcastReceiver() {
@@ -146,6 +129,8 @@ class MainActivity : AppCompatActivity(), MyBroadcastListener {
 
                 Toast.makeText(context, "message is $reply", Toast.LENGTH_SHORT).show()
                 System.err.println(">>>>>>>>>>>@@ $reply")
+
+                MainActivity().cancelNotification()
             }
         }
     }

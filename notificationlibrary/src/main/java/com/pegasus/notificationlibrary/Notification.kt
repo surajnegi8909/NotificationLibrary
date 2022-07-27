@@ -108,6 +108,7 @@ class Notification {
         ) {
 
             var pendingIntent: PendingIntent?= null
+            var pendingIntentActivity: PendingIntent?= null
             if(usesFragment){
                 pendingIntent = setNavGraph?.let {
                     setDestination?.let { it1 ->
@@ -135,6 +136,8 @@ class Notification {
 //                    getPendingIntent(0,
 //                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 //                }
+                    pendingIntentActivity=  PendingIntent.getActivity(context, 0, intentOne,
+                PendingIntent.FLAG_UPDATE_CURRENT)
 
                   pendingIntent = PendingIntent.getBroadcast(context, 0, intentOne,
                 PendingIntent.FLAG_UPDATE_CURRENT)
@@ -156,13 +159,15 @@ class Notification {
                 .setSmallIcon(smallIcon)
                 .setContentTitle(title)
                 .setContentText(descriptionText)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .addAction(action)
+                .setContentIntent(pendingIntentActivity)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
             with(NotificationManagerCompat.from(context)) {
                 notify(notificationId, builder.build())
             }
+
+
         }
 
         fun bigTextNotification(
@@ -431,5 +436,9 @@ class Notification {
             }
         }
 
+        fun dismissNotification(notificationId: Int){
+            System.err.println(">>>>>>>>>> cancelled???? ")
+            mNotificationManagerCompat?.cancel(notificationId)
+        }
     }
 }
