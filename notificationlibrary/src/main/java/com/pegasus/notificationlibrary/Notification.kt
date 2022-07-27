@@ -43,7 +43,7 @@ class Notification {
             descriptionText: String,
             notificationId: Int,
             activityName: Class<*>,
-            fragmentActivity: Class<Activity?>,
+            fragmentActivity: Class<out Activity?>,
             usesFragment:Boolean,
             setNavGraph:NavGraph?,
             setDestination: Int?,
