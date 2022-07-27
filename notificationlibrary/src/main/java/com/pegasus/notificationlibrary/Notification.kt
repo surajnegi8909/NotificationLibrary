@@ -45,7 +45,7 @@ class Notification {
             activityName: Class<*>,
             fragmentActivity: Class<out Activity?>,
             usesFragment:Boolean,
-            setNavGraph:NavGraph?,
+            setNavGraph:Int?,
             setDestination: Int?,
             setArgument:Bundle?
         ) {
