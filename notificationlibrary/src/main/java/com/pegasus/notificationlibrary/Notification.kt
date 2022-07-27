@@ -122,6 +122,7 @@ class Notification {
                         }
                     }
                 }
+                pendingIntentActivity=  pendingIntent
             }
             else {
                 val intentOne = Intent(context, activityName)
