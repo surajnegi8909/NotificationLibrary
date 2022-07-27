@@ -27,7 +27,7 @@
         </activity>
 
         <receiver
-            android:name=".receiver.ActionReceiver"
+            android:name=".MainActivity$ActionReceiver"
             android:enabled="true"
             android:exported="true" />
     </application>

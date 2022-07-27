@@ -10,9 +10,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.RemoteInput
 import androidx.core.app.TaskStackBuilder
 import androidx.navigation.NavDeepLinkBuilder
-import androidx.navigation.NavGraph
 
 class Notification {
     companion object {
@@ -44,10 +44,10 @@ class Notification {
             notificationId: Int,
             activityName: Class<*>?,
             fragmentActivity: Class<out Activity?>?,
-            usesFragment:Boolean,
-            setNavGraph:Int?,
+            usesFragment: Boolean,
+            setNavGraph: Int?,
             setDestination: Int?,
-            setArgument:Bundle?
+            setArgument: Bundle?,
         ) {
 
             var pendingIntent: PendingIntent?= null
@@ -92,6 +92,79 @@ class Notification {
             }
         }
 
+        fun basicCustomNotification(
+            context: Context,
+            channelId: String,
+            smallIcon: Int,
+            title: String,
+            descriptionText: String,
+            notificationId: Int,
+            activityName: Class<*>?,
+            fragmentActivity: Class<out Activity?>?,
+            usesFragment: Boolean,
+            setNavGraph: Int?,
+            setDestination: Int?,
+            setArgument: Bundle?,
+        ) {
+
+            var pendingIntent: PendingIntent?= null
+            if(usesFragment){
+                pendingIntent = setNavGraph?.let {
+                    setDestination?.let { it1 ->
+                        fragmentActivity?.let { it2 ->
+                            NavDeepLinkBuilder(context)
+                                .setComponentName(it2)
+                                .setGraph(setNavGraph)
+                                .setDestination(it1)
+                                .setArguments(setArgument)
+                                .createPendingIntent()
+                        }
+                    }
+                }
+            }
+            else {
+                val intentOne = Intent(context, activityName)
+                intentOne.action = title
+                //passing notificationId to receiver class through intent
+                intentOne.putExtra("id", notificationId)
+                intentOne.putExtra("title", "Basic Notification")
+//                pendingIntent = TaskStackBuilder.create(context).run {
+//                    // Add the intent, which inflates the back stack
+//                    addNextIntentWithParentStack(intentOne)
+//                    // Get the PendingIntent containing the entire back stack
+//                    getPendingIntent(0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+//                }
+
+                  pendingIntent = PendingIntent.getBroadcast(context, 0, intentOne,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+
+            val replyLabel = "Enter your reply here"
+
+            //Initialise RemoteInput
+            val remoteInput: RemoteInput = RemoteInput.Builder("reply")
+                .setLabel(replyLabel)
+                .build()
+
+            val action = NotificationCompat.Action.Builder(android.R.drawable.sym_action_chat,
+                "REPLY", pendingIntent).addRemoteInput(remoteInput)
+                .setAllowGeneratedReplies(true)
+                .build()
+
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(smallIcon)
+                .setContentTitle(title)
+                .setContentText(descriptionText)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .addAction(action)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true)
+            with(NotificationManagerCompat.from(context)) {
+                notify(notificationId, builder.build())
+            }
+        }
+
         fun bigTextNotification(
             context: Context,
             channelId: String,
@@ -102,10 +175,10 @@ class Notification {
             notificationId: Int,
             activityName: Class<*>?,
             fragmentActivity: Class<out Activity?>?,
-            usesFragment:Boolean,
-            setNavGraph:Int?,
+            usesFragment: Boolean,
+            setNavGraph: Int?,
             setDestination: Int?,
-            setArgument:Bundle?
+            setArgument: Bundle?,
         ) {
             var pendingIntent: PendingIntent?= null
             if(usesFragment){
@@ -171,10 +244,10 @@ class Notification {
             notificationId: Int,
             activityName: Class<*>?,
             fragmentActivity: Class<out Activity?>?,
-            usesFragment:Boolean,
-            setNavGraph:Int?,
+            usesFragment: Boolean,
+            setNavGraph: Int?,
             setDestination: Int?,
-            setArgument:Bundle?
+            setArgument: Bundle?,
         ) {
 
             var pendingIntent: PendingIntent?= null
@@ -198,6 +271,8 @@ class Notification {
                 //passing notificationId to receiver class through intent
                 intentOne.putExtra("id", notificationId)
                 intentOne.putExtra("title", "Basic Notification")
+
+
                 pendingIntent= TaskStackBuilder.create(context).run {
                     // Add the intent, which inflates the back stack
                     addNextIntentWithParentStack(intentOne)
@@ -241,10 +316,10 @@ class Notification {
             notificationId: Int,
             activityName: Class<*>?,
             fragmentActivity: Class<out Activity?>?,
-            usesFragment:Boolean,
-            setNavGraph:Int?,
+            usesFragment: Boolean,
+            setNavGraph: Int?,
             setDestination: Int?,
-            setArgument:Bundle?
+            setArgument: Bundle?,
         ) {
 
             var pendingIntent: PendingIntent?= null
@@ -268,7 +343,7 @@ class Notification {
                 //passing notificationId to receiver class through intent
                 intentOne.putExtra("id", notificationId)
                 intentOne.putExtra("title", "Basic Notification")
-                val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                pendingIntent = TaskStackBuilder.create(context).run {
                     // Add the intent, which inflates the back stack
                     addNextIntentWithParentStack(intentOne)
                     // Get the PendingIntent containing the entire back stack
@@ -355,5 +430,6 @@ class Notification {
                 notify(notificationId, builder.build())
             }
         }
+
     }
 }
