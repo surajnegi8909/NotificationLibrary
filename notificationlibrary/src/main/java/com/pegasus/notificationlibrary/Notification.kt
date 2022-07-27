@@ -42,33 +42,35 @@ class Notification {
             title: String,
             descriptionText: String,
             notificationId: Int,
-            activityName: Class<*>,
-            fragmentActivity: Class<out Activity?>,
+            activityName: Class<*>?,
+            fragmentActivity: Class<out Activity?>?,
             usesFragment:Boolean,
             setNavGraph:Int?,
             setDestination: Int?,
             setArgument:Bundle?
         ) {
 
-            val intentOne = Intent(context, activityName)
-            intentOne.action = title
-            //passing notificationId to receiver class through intent
-            intentOne.putExtra("id", notificationId)
-            intentOne.putExtra("title", "Basic Notification")
             var pendingIntent: PendingIntent?= null
             if(usesFragment){
                 pendingIntent = setNavGraph?.let {
                     setDestination?.let { it1 ->
-                        NavDeepLinkBuilder(context)
-                            .setComponentName(fragmentActivity)
-                            .setGraph(it)
-                            .setDestination(it1)
-                            .setArguments(setArgument)
-                            .createPendingIntent()
+                        fragmentActivity?.let { it2 ->
+                            NavDeepLinkBuilder(context)
+                                .setComponentName(it2)
+                                .setGraph(setNavGraph)
+                                .setDestination(it1)
+                                .setArguments(setArgument)
+                                .createPendingIntent()
+                        }
                     }
                 }
             }
             else {
+                val intentOne = Intent(context, activityName)
+                intentOne.action = title
+                //passing notificationId to receiver class through intent
+                intentOne.putExtra("id", notificationId)
+                intentOne.putExtra("title", "Basic Notification")
                 pendingIntent = TaskStackBuilder.create(context).run {
                     // Add the intent, which inflates the back stack
                     addNextIntentWithParentStack(intentOne)
@@ -98,25 +100,42 @@ class Notification {
             title: String,
             longDescriptionText: String,
             notificationId: Int,
-            activityName: Class<*>,
+            activityName: Class<*>?,
+            fragmentActivity: Class<out Activity?>?,
+            usesFragment:Boolean,
+            setNavGraph:Int?,
+            setDestination: Int?,
+            setArgument:Bundle?
         ) {
-            //removes all previously shown notifications.
-            mNotificationManagerCompat?.cancelAll()
-
-            val intentOne = Intent(context, activityName)
-            intentOne.action = title
-            //passing notificationId to receiver class through intent
-            intentOne.putExtra("id", notificationId)
-            intentOne.putExtra("title", "Big Text Notification")
-
-            val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-                // Add the intent, which inflates the back stack
-                addNextIntentWithParentStack(intentOne)
-                // Get the PendingIntent containing the entire back stack
-                getPendingIntent(0,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            var pendingIntent: PendingIntent?= null
+            if(usesFragment){
+                pendingIntent = setNavGraph?.let {
+                    setDestination?.let { it1 ->
+                        fragmentActivity?.let { it2 ->
+                            NavDeepLinkBuilder(context)
+                                .setComponentName(it2)
+                                .setGraph(setNavGraph)
+                                .setDestination(it1)
+                                .setArguments(setArgument)
+                                .createPendingIntent()
+                        }
+                    }
+                }
             }
-
+            else {
+                val intentOne = Intent(context, activityName)
+                intentOne.action = title
+                //passing notificationId to receiver class through intent
+                intentOne.putExtra("id", notificationId)
+                intentOne.putExtra("title", "Basic Notification")
+                pendingIntent = TaskStackBuilder.create(context).run {
+                    // Add the intent, which inflates the back stack
+                    addNextIntentWithParentStack(intentOne)
+                    // Get the PendingIntent containing the entire back stack
+                    getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                }
+            }
 //            val pendingIntent = PendingIntent.getActivity(context, 0, intentOne,
 //                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT)
 
@@ -150,23 +169,42 @@ class Notification {
             descriptionText: String,
             summeryText: String,
             notificationId: Int,
-            activityName: Class<*>,
+            activityName: Class<*>?,
+            fragmentActivity: Class<out Activity?>?,
+            usesFragment:Boolean,
+            setNavGraph:Int?,
+            setDestination: Int?,
+            setArgument:Bundle?
         ) {
-            //removes all previously shown notifications.
-            mNotificationManagerCompat?.cancelAll()
 
-            val intentOne = Intent(context, activityName)
-            intentOne.action = title
-            //passing notificationId to receiver class through intent
-            intentOne.putExtra("id", notificationId)
-            intentOne.putExtra("title", "Big Picture Notification")
-
-            val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-                // Add the intent, which inflates the back stack
-                addNextIntentWithParentStack(intentOne)
-                // Get the PendingIntent containing the entire back stack
-                getPendingIntent(0,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            var pendingIntent: PendingIntent?= null
+            if(usesFragment){
+                pendingIntent = setNavGraph?.let {
+                    setDestination?.let { it1 ->
+                        fragmentActivity?.let { it2 ->
+                            NavDeepLinkBuilder(context)
+                                .setComponentName(it2)
+                                .setGraph(setNavGraph)
+                                .setDestination(it1)
+                                .setArguments(setArgument)
+                                .createPendingIntent()
+                        }
+                    }
+                }
+            }
+            else {
+                val intentOne = Intent(context, activityName)
+                intentOne.action = title
+                //passing notificationId to receiver class through intent
+                intentOne.putExtra("id", notificationId)
+                intentOne.putExtra("title", "Basic Notification")
+                pendingIntent= TaskStackBuilder.create(context).run {
+                    // Add the intent, which inflates the back stack
+                    addNextIntentWithParentStack(intentOne)
+                    // Get the PendingIntent containing the entire back stack
+                    getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                }
             }
 
             val bitmap = BitmapFactory.decodeResource(context.resources,
@@ -201,22 +239,42 @@ class Notification {
             descriptionText: String,
             multiline: ArrayList<String>,
             notificationId: Int,
-            activityName: Class<*>,
+            activityName: Class<*>?,
+            fragmentActivity: Class<out Activity?>?,
+            usesFragment:Boolean,
+            setNavGraph:Int?,
+            setDestination: Int?,
+            setArgument:Bundle?
         ) {
-            //removes all previously shown notifications.
-            mNotificationManagerCompat?.cancelAll()
-            val intentOne = Intent(context, activityName)
-            intentOne.action = title
-            //passing notificationId to receiver class through intent
-            intentOne.putExtra("id", notificationId)
-            intentOne.putExtra("title", "Multiline Notification")
 
-            val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-                // Add the intent, which inflates the back stack
-                addNextIntentWithParentStack(intentOne)
-                // Get the PendingIntent containing the entire back stack
-                getPendingIntent(0,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            var pendingIntent: PendingIntent?= null
+            if(usesFragment){
+                pendingIntent = setNavGraph?.let {
+                    setDestination?.let { it1 ->
+                        fragmentActivity?.let { it2 ->
+                            NavDeepLinkBuilder(context)
+                                .setComponentName(it2)
+                                .setGraph(setNavGraph)
+                                .setDestination(it1)
+                                .setArguments(setArgument)
+                                .createPendingIntent()
+                        }
+                    }
+                }
+            }
+            else {
+                val intentOne = Intent(context, activityName)
+                intentOne.action = title
+                //passing notificationId to receiver class through intent
+                intentOne.putExtra("id", notificationId)
+                intentOne.putExtra("title", "Basic Notification")
+                val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                    // Add the intent, which inflates the back stack
+                    addNextIntentWithParentStack(intentOne)
+                    // Get the PendingIntent containing the entire back stack
+                    getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                }
             }
 
             val style = NotificationCompat.InboxStyle() //To add n lines, call it n times
